@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>글쓰기 - My Blog</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- jQuery 로드 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/write.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <h1><a href="index.html">My Blog</a></h1>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="write-container">
+            <h2>새 글 작성</h2>
+            <form id="writeForm">
+                <div class="form-group">
+                    <label for="title">제목</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="image-file">이미지 첨부</label>
+                    <input type="file" id="image-file" accept="image/*">
+                    <small class="file-info">최대 5MB, 이미지 파일만 가능</small>
+                    <div id="image-preview" class="image-preview"></div>
+                </div>
+                <div class="form-group">
+                    <label for="content">내용</label>
+                    <textarea id="content" name="content" rows="10" required></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="submit-btn">작성완료</button>
+                    <a href="index.html" class="cancel-btn">취소</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 My Blog. All rights reserved.</p>
+    </footer>
+</body>
+</html> 
