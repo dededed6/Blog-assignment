@@ -1,111 +1,432 @@
-// Google Apps Script 웹앱 URL (실제 사용시 변경 필요)
+// Google Apps Script 웹앱 URL
 const SCRIPT_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwKf419HOph2rBS0aCHCZ18dUAKyik_xUv7VUcUIEB669lB9Vw8z0EYoDVa45HTlEZfEw/exec';
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILES = 10; // 최대 업로드 가능한 이미지 수
 
-$(document).ready(function() {
-    // 이미지 파일 선택 시 미리보기
-    $('#image-file').on('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+// 이미지 ID를 썸네일 URL로 변환하는 함수
+function convertToThumbnailUrl(fileId) {
+    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+}
 
-        // 파일 유효성 검사
-        if (!file.type.startsWith('image/')) {
-            alert('이미지 파일만 업로드 가능합니다.');
-            this.value = '';
-            return;
-        }
+// 로딩 오버레이 표시/숨김 함수
+function toggleLoading(show) {
+    const overlay = document.querySelector('.loading-overlay');
+    overlay.style.display = show ? 'flex' : 'none';
+}
 
-        if (file.size > MAX_FILE_SIZE) {
-            alert('파일 크기는 5MB를 초과할 수 없습니다.');
-            this.value = '';
-            return;
-        }
-
-        // 이미지 미리보기
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = $('#image-preview');
-            preview.html(`<img src="${e.target.result}" alt="미리보기">`);
-            preview.show();
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // 폼 제출 이벤트 처리
-    $('#writeForm').on('submit', async function(e) {
-        e.preventDefault();
-
-        // 로딩 상태 표시
-        const submitBtn = $('.submit-btn');
-        submitBtn.prop('disabled', true).text('저장 중...');
-
-        try {
-            // 이미지 파일이 있으면 먼저 업로드
-            const imageFile = $('#image-file')[0].files[0];
-            let imageUrl = '';
-            
-            if (imageFile) {
-                imageUrl = await uploadImage(imageFile);
-            }
-
-            // 포스트 데이터 전송
-            await sendPost({
-                title: $('#title').val(),
-                content: $('#content').val(),
-                imageUrl: imageUrl,
-                timestamp: new Date().toISOString()
-            });
-
-            alert('포스트가 성공적으로 저장되었습니다!');
-            window.location.href = 'index.html';
-
-        } catch (error) {
-            console.error('Error:', error);
-            alert('저장 중 오류가 발생했습니다. 다시 시도해주세요.');
-            submitBtn.prop('disabled', false).text('작성완료');
-        }
-    });
-});
+// Base64 이미지를 파일로 변환
+async function base64ToFile(dataUrl, filename) {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    return new File([blob], filename, { type: blob.type });
+}
 
 // 이미지 업로드 함수
 async function uploadImage(file) {
-    return new Promise((resolve, reject) => {
+    try {
         const reader = new FileReader();
-        
-        reader.onload = async function() {
-            try {
-                const response = await fetch(`${SCRIPT_WEBAPP_URL}?filename=${encodeURIComponent(file.name)}&mimeType=${encodeURIComponent(file.type)}`, {
-                    method: 'POST',
-                    body: JSON.stringify([...new Int8Array(reader.result)])
-                });
+        return new Promise((resolve, reject) => {
+            reader.onload = async function() {
+                try {
+                    const url = new URL(SCRIPT_WEBAPP_URL);
+                    url.searchParams.append('filename', file.name);
+                    url.searchParams.append('mimeType', file.type);
+                    
+                    const response = await fetch(url.toString(), {
+                        redirect: "follow",
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "text/plain;charset=utf-8",
+                        },
+                        body: JSON.stringify([...new Int8Array(reader.result)])
+                    });
 
-                if (!response.ok) throw new Error('이미지 업로드 실패');
-                
-                const result = await response.json();
-                if (result.imageUrl) {
-                    resolve(result.imageUrl);
-                } else {
-                    throw new Error('이미지 URL을 받지 못했습니다.');
+                    if (!response.ok) {
+                        throw new Error(`이미지 업로드 실패 (${response.status})`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.fileId) {
+                        const thumbnailUrl = convertToThumbnailUrl(result.fileId);
+                        resolve(thumbnailUrl);
+                    } else {
+                        throw new Error('이미지 ID를 받지 못했습니다.');
+                    }
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    reject(error);
                 }
-            } catch (error) {
-                reject(error);
-            }
-        };
-
-        reader.onerror = () => reject(new Error('파일 읽기 실패'));
-        reader.readAsArrayBuffer(file);
-    });
+            };
+            reader.onerror = () => reject(new Error('파일 읽기 실패'));
+            reader.readAsArrayBuffer(file);
+        });
+    } catch (error) {
+        console.error('Upload preparation error:', error);
+        throw error;
+    }
 }
 
-// 포스트 데이터 전송 함수
-async function sendPost(postData) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: SCRIPT_WEBAPP_URL,
-            method: 'POST',
-            data: postData,
-            success: resolve,
-            error: reject
+document.addEventListener('DOMContentLoaded', function() {
+    const editor = document.getElementById('editor');
+    const titleInput = document.getElementById('title-input');
+    const publishBtn = document.getElementById('publish-btn');
+    const imageUpload = document.getElementById('image-upload');
+    const formatBtn = document.getElementById('format-btn');
+    const formatMenu = document.querySelector('.format-menu');
+    const formatItems = document.querySelectorAll('.format-item');
+    const imagePreview = document.getElementById('image-preview');
+    const loadingOverlay = document.querySelector('.loading-overlay');
+    const floatingMenu = document.querySelector('.floating-menu');
+
+    // 에디터 포커스 이벤트 처리
+    editor.addEventListener('focus', () => {
+        floatingMenu.style.opacity = '1';
+        floatingMenu.style.visibility = 'visible';
+    });
+
+    editor.addEventListener('blur', (e) => {
+        // 포맷 메뉴를 클릭한 경우는 제외
+        if (!e.relatedTarget || !e.relatedTarget.closest('.floating-menu')) {
+            floatingMenu.style.opacity = '0';
+            floatingMenu.style.visibility = 'hidden';
+            formatMenu.classList.remove('active');
+        }
+    });
+
+    // 서식 메뉴 토글
+    formatBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        formatMenu.classList.toggle('active');
+    });
+
+    // 메뉴 외부 클릭시 닫기
+    document.addEventListener('click', (e) => {
+        if (!formatMenu.contains(e.target) && !formatBtn.contains(e.target)) {
+            formatMenu.classList.remove('active');
+        }
+    });
+
+    // 서식 적용 함수
+    function applyFormat(format) {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+
+        const range = selection.getRangeAt(0);
+        const selectedText = range.toString();
+        
+        // 현재 커서가 있는 블록 요소 찾기
+        let currentBlock = range.startContainer;
+        while (currentBlock && currentBlock.nodeType !== Node.ELEMENT_NODE) {
+            currentBlock = currentBlock.parentNode;
+        }
+
+        let newElement;
+        switch (format) {
+            case 'h2':
+            case 'h3':
+                newElement = document.createElement(format);
+                newElement.textContent = selectedText || '제목';
+                break;
+            case 'blockquote':
+                newElement = document.createElement(format);
+                newElement.textContent = selectedText || '';
+                break;
+            case 'code':
+                newElement = document.createElement('pre');
+                newElement.textContent = selectedText || 'print("Hello, World!")';
+                // 코드 블록 키 이벤트 리스너 추가
+                newElement.addEventListener('keydown', handleCodeBlockKeydown);
+                break;
+            case 'image':
+                imageUpload.click();
+                formatMenu.classList.remove('active');
+                return;
+        }
+
+        if (newElement) {
+            // 현재 블록이 있는 경우, 그 뒤에 새 요소 삽입
+            if (currentBlock && currentBlock.parentNode) {
+                currentBlock.parentNode.insertBefore(newElement, currentBlock.nextSibling);
+            } else {
+                // 현재 블록이 없는 경우, 에디터 끝에 삽입
+                editor.appendChild(newElement);
+            }
+            
+            // 새 단락 추가
+            const p = document.createElement('p');
+            p.innerHTML = '<br>';
+            newElement.parentNode.insertBefore(p, newElement.nextSibling);
+            
+            // 커서를 새 단락으로 이동
+            const newRange = document.createRange();
+            newRange.setStart(p, 0);
+            newRange.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+        }
+
+        formatMenu.classList.remove('active');
+    }
+
+    // 코드 블록 키 이벤트 처리
+    function handleCodeBlockKeydown(e) {
+        if (e.key === '{' || e.key === '(') {
+            e.preventDefault();
+            
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            const currentLine = range.startContainer.textContent;
+            const cursorPosition = range.startOffset;
+            
+            // 괄호 쌍과 들여쓰기된 새 줄 추가
+            const closingBracket = e.key === '{' ? '}' : ')';
+            const textNode = document.createTextNode(e.key + '\n    \n' + closingBracket);
+            range.insertNode(textNode);
+            
+            // 커서를 들여쓰기된 줄로 이동
+            const newRange = document.createRange();
+            newRange.setStart(textNode, e.key.length + 5);
+            newRange.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+        }
+    }
+
+    // 서식 메뉴 아이템 클릭 이벤트
+    formatItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const format = item.getAttribute('data-format');
+            applyFormat(format);
         });
     });
-} 
+
+    // 에디터 초기화
+    if (!editor.querySelector('p')) {
+        editor.innerHTML = '<p><br></p>';
+    }
+
+    // 에디터 Enter 키 처리
+    editor.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            let currentBlock = range.startContainer;
+            
+            // 현재 블록 요소 찾기
+            while (currentBlock && currentBlock.nodeType !== Node.ELEMENT_NODE) {
+                currentBlock = currentBlock.parentNode;
+            }
+            
+            // 일반 단락 추가
+            const p = document.createElement('p');
+            p.innerHTML = '<br>';
+            
+            if (currentBlock.tagName === 'P') {
+                currentBlock.parentNode.insertBefore(p, currentBlock.nextSibling);
+            } else {
+                editor.appendChild(p);
+            }
+            
+            const newRange = document.createRange();
+            newRange.setStart(p, 0);
+            newRange.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+        }
+    });
+
+    // 이미지 드래그 앤 드롭
+    editor.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.style.backgroundColor = 'rgba(18, 184, 134, 0.05)';
+    });
+
+    editor.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.style.backgroundColor = '';
+    });
+
+    editor.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.style.backgroundColor = '';
+        handleImageFiles(e.dataTransfer.files);
+    });
+
+    // 이미지 붙여넣기
+    editor.addEventListener('paste', function(e) {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        
+        for (const item of items) {
+            if (item.type.indexOf('image') === 0) {
+                const file = item.getAsFile();
+                handleImageFiles([file]);
+                e.preventDefault();
+                break;
+            }
+        }
+    });
+
+    // 발행하기
+    publishBtn.addEventListener('click', async function() {
+        const title = titleInput.value.trim();
+        if (!title) {
+            alert('제목을 입력해주세요.');
+            titleInput.focus();
+            return;
+        }
+
+        const content = editor.innerHTML;
+        if (!content.trim() || content === '<p><br></p>') {
+            alert('내용을 입력해주세요.');
+            editor.focus();
+            return;
+        }
+
+        try {
+            toggleLoading(true);
+
+            // 에디터 내의 모든 이미지 찾기
+            const images = editor.querySelectorAll('img');
+            const uploadedUrls = [];
+            let processedImages = 0;
+
+            // 각 이미지 처리
+            for (const img of images) {
+                if (img.src.startsWith('data:')) {
+                    try {
+                        const file = await base64ToFile(
+                            img.src,
+                            `image_${processedImages + 1}.${img.src.split(';')[0].split('/')[1]}`
+                        );
+                        
+                        if (file.size > MAX_FILE_SIZE) {
+                            throw new Error(`이미지 크기가 5MB를 초과합니다: ${file.name}`);
+                        }
+
+                        const uploadedUrl = await uploadImage(file);
+                        uploadedUrls.push(uploadedUrl);
+                        img.src = uploadedUrl;
+                        processedImages++;
+                    } catch (error) {
+                        console.error('Image processing error:', error);
+                        alert(`이미지 업로드 중 오류가 발생했습니다: ${error.message}`);
+                        return;
+                    }
+                } else {
+                    uploadedUrls.push(img.src);
+                }
+            }
+
+            // 포스트 데이터 전송
+            const postData = {
+                title: title,
+                content: editor.innerHTML,
+                imageUrl: uploadedUrls.join(','),
+                timestamp: new Date().toISOString()
+            };
+
+            const response = await fetch(SCRIPT_WEBAPP_URL, {
+                redirect: "follow",
+                method: 'POST',
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8",
+                },
+                body: JSON.stringify(postData)
+            });
+
+            if (!response.ok) {
+                throw new Error(`포스트 저장 실패 (${response.status})`);
+            }
+
+            const result = await response.json();
+            if (result.status !== "success") {
+                throw new Error(result.message || '포스트 저장 실패');
+            }
+
+            window.location.href = '/';
+        } catch (error) {
+            console.error('발행 실패:', error);
+            alert('발행에 실패했습니다. 다시 시도해주세요.');
+        } finally {
+            toggleLoading(false);
+        }
+    });
+
+    // 이미지 파일 선택
+    imageUpload.addEventListener('change', (e) => {
+        handleImageFiles(e.target.files);
+        // 파일 선택 후 input 초기화
+        e.target.value = '';
+    });
+
+    // 이미지 파일 처리 함수 수정
+    function handleImageFiles(files) {
+        if (!files || files.length === 0) return;
+
+        for (const file of files) {
+            if (!file.type.startsWith('image/')) {
+                console.warn('Not an image file:', file.name);
+                continue;
+            }
+
+            if (file.size > MAX_FILE_SIZE) {
+                alert(`이미지 크기가 5MB를 초과합니다: ${file.name}`);
+                continue;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // 현재 커서 위치 저장
+                const selection = window.getSelection();
+                const range = selection.getRangeAt(0);
+                let currentBlock = range.startContainer;
+                
+                // 현재 블록 요소 찾기
+                while (currentBlock && currentBlock.nodeType !== Node.ELEMENT_NODE) {
+                    currentBlock = currentBlock.parentNode;
+                }
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                
+                const p = document.createElement('p');
+                p.appendChild(img);
+                
+                // 현재 위치에 이미지 삽입
+                if (currentBlock && currentBlock.parentNode) {
+                    currentBlock.parentNode.insertBefore(p, currentBlock.nextSibling);
+                } else {
+                    editor.appendChild(p);
+                }
+                
+                // 이미지 다음에 새 단락 추가
+                const newP = document.createElement('p');
+                newP.innerHTML = '<br>';
+                p.parentNode.insertBefore(newP, p.nextSibling);
+                
+                // 커서를 새 단락으로 이동
+                const newRange = document.createRange();
+                newRange.setStart(newP, 0);
+                newRange.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(newRange);
+            };
+            
+            reader.onerror = function(error) {
+                console.error('이미지 파일 읽기 실패:', error);
+                alert('이미지 파일을 읽는 중 오류가 발생했습니다.');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    }
+}); 

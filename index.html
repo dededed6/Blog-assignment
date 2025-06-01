@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8"> q
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Blog</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- Google Visualization API 로드 -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="js/main.js"></script>
 </head>
@@ -13,49 +12,32 @@
     <header>
         <nav>
             <div class="nav-container">
-                <h1>My Blog</h1>
-                <a href="write.html" class="write-btn">글쓰기</a>
+                <h1><a href="/">My Blog</a></h1>
+                <div class="nav-controls">
+                    <button class="search-toggle-btn" aria-label="검색">
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="none" stroke="currentColor" stroke-width="1.5" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="nav-right">
+                    <div class="search-bar">
+                        <input type="text" id="search-input" placeholder="검색어를 입력하세요">
+                    </div>
+                </div>
+                <a href="/write.html" class="write-btn">글쓰기</a>
             </div>
         </nav>
     </header>
 
     <main>
-        <!-- 검색 바 추가 -->
-        <div class="search-bar">
-            <input type="text" id="search-input" placeholder="검색어를 입력하세요...">
-            <button onclick="searchPosts()">검색</button>
-        </div>
         <div class="posts-container">
-            <!-- 포스트 카드들이 여기에 동적으로 추가됨 -->
+            <!-- 포스트들이 여기에 동적으로 추가됩니다 -->
         </div>
     </main>
 
     <footer>
         <p>&copy; 2024 My Blog. All rights reserved.</p>
     </footer>
-
-    <!-- 검색 기능 스크립트 -->
-    <script>
-        function searchPosts() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const posts = document.querySelectorAll('.post-card');
-            
-            posts.forEach(post => {
-                const title = post.querySelector('h2').textContent.toLowerCase();
-                if (title.includes(searchTerm)) {
-                    post.style.display = 'block';
-                } else {
-                    post.style.display = 'none';
-                }
-            });
-        }
-
-        // Enter 키로도 검색 가능하도록 설정
-        document.getElementById('search-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchPosts();
-            }
-        });
-    </script>
 </body>
 </html> 
