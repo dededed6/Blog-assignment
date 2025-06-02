@@ -49,6 +49,7 @@ nav {
 }
 
 .write-btn {
+    width: min-content;
     background-color: #12b886;
     color: white;
     padding: 0.5rem 1rem;
@@ -289,6 +290,39 @@ mark {
 
 .post-detail-content {
     line-height: 1.6;
+}
+
+/* Consistent Edit and Delete Button Styling */
+.edit-button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #007bff;
+    background-color: white;
+    color: #007bff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.edit-button:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.delete-button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #dc3545;
+    background-color: white;
+    color: #dc3545;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.delete-button:hover {
+    background-color: #dc3545;
+    color: white;
 }
 
 .back-button {
@@ -573,6 +607,8 @@ footer {
         font-size: 16px; /* iOS에서 자동 확대 방지 */
     }
 }
+
+
 
 @keyframes slideDown {
     from {

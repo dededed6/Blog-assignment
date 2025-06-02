@@ -212,7 +212,7 @@ function createPostCard(post, index) {
         const imageUrls = post.imageUrl.split(',');
         const imageContainer = document.createElement('div');
         imageContainer.className = 'post-images';
-        
+
         imageUrls.forEach(url => {
             if (url.trim()) {
                 const imgWrapper = document.createElement('div');
@@ -237,7 +237,7 @@ function createPostCard(post, index) {
                 imageContainer.appendChild(imgWrapper);
             }
         });
-        
+
         card.appendChild(imageContainer);
     }
     
@@ -286,7 +286,8 @@ function showPostDetail(post, index) {
             <div class="post-detail-content">
                 <p>${post.content}</p>
             </div>
-            <div class="post-detail-controls">
+            <br>
+            <div>
                 <button class="edit-button" onclick="editPost(${index})">수정</button>
                 <button class="delete-button" onclick='deletePost(${JSON.stringify(post)})'>삭제</button>
             </div>
@@ -459,4 +460,4 @@ function initializeSearchMenu() {
 document.addEventListener('DOMContentLoaded', () => {
     // Google Charts API가 이미 로드되어 있으므로 추가 작업 불필요
     initializeSearchMenu(); // 검색 메뉴 초기화
-}); 
+});
