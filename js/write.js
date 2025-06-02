@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (selection.rangeCount > 0) {
             savedRange = selection.getRangeAt(0);
         }
+        editor.focus();
         formatMenu.classList.toggle('active');
     });
 
@@ -198,10 +199,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const selection = window.getSelection();
                 selection.removeAllRanges();
                 selection.addRange(savedRange);
-
-                const editor = document.getElementById('editor');
-                editor.focus(); // Ensure focus is back in editor
             }
+            editor.focus(); // Ensure focus is always restored for mobile
 
             applyFormat(format);
         });
