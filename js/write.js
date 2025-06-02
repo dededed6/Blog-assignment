@@ -1,3 +1,4 @@
+let savedRange = null;
 // Google Apps Script 웹앱 URL
 const SCRIPT_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwKf419HOph2rBS0aCHCZ18dUAKyik_xUv7VUcUIEB669lB9Vw8z0EYoDVa45HTlEZfEw/exec';
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -88,6 +89,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // 서식 메뉴 토글
     formatBtn.addEventListener('click', (e) => {
         e.stopPropagation();
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            savedRange = selection.getRangeAt(0);
+        }
         formatMenu.classList.toggle('active');
     });
 
@@ -187,6 +192,11 @@ document.addEventListener('DOMContentLoaded', function() {
     formatItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
+            if (savedRange) {
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(savedRange);
+            }
             const format = item.getAttribute('data-format');
             applyFormat(format);
         });
@@ -365,49 +375,55 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                // 현재 커서 위치 저장
-                const selection = window.getSelection();
-                const range = selection.getRangeAt(0);
-                let currentBlock = range.startContainer;
-                
-                // 현재 블록 요소 찾기
-                while (currentBlock && currentBlock.nodeType !== Node.ELEMENT_NODE) {
-                    currentBlock = currentBlock.parentNode;
-                }
-
                 const img = document.createElement('img');
                 img.src = e.target.result;
                 img.style.maxWidth = '100%';
                 img.style.height = 'auto';
-                
+
                 const p = document.createElement('p');
                 p.appendChild(img);
-                
-                // 현재 위치에 이미지 삽입
-                if (currentBlock && currentBlock.parentNode) {
-                    currentBlock.parentNode.insertBefore(p, currentBlock.nextSibling);
-                } else {
-                    editor.appendChild(p);
-                }
-                
-                // 이미지 다음에 새 단락 추가
+
                 const newP = document.createElement('p');
                 newP.innerHTML = '<br>';
-                p.parentNode.insertBefore(newP, p.nextSibling);
-                
-                // 커서를 새 단락으로 이동
+
+                const selection = window.getSelection();
+                if (selection && selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const editor = document.getElementById('editor');
+                    const isInEditor = editor.contains(range.startContainer);
+                    if (isInEditor) {
+                        range.deleteContents();
+                        range.insertNode(newP);
+                        range.insertNode(p);
+
+                        const newRange = document.createRange();
+                        newRange.setStart(newP, 0);
+                        newRange.collapse(true);
+                        selection.removeAllRanges();
+                        selection.addRange(newRange);
+                        return;
+                    }
+                }
+
+                // fallback if cursor is not in editor
+                const editor = document.getElementById('editor');
+                editor.appendChild(p);
+                editor.appendChild(newP);
+
                 const newRange = document.createRange();
                 newRange.setStart(newP, 0);
                 newRange.collapse(true);
-                selection.removeAllRanges();
-                selection.addRange(newRange);
+
+                const selectionFallback = window.getSelection();
+                selectionFallback.removeAllRanges();
+                selectionFallback.addRange(newRange);
             };
-            
+
             reader.onerror = function(error) {
                 console.error('이미지 파일 읽기 실패:', error);
                 alert('이미지 파일을 읽는 중 오류가 발생했습니다.');
             };
-            
+
             reader.readAsDataURL(file);
         }
     }

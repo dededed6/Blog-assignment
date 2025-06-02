@@ -49,13 +49,16 @@ nav {
 }
 
 .write-btn {
-    width: fit-content;
     background-color: #12b886;
     color: white;
+    border: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
-    text-decoration: none;
+    cursor: pointer;
+    font-size: 1rem;
     font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
 }
 
 /* 검색 바 스타일 */

@@ -212,7 +212,7 @@ function createPostCard(post, index) {
         const imageUrls = post.imageUrl.split(',');
         const imageContainer = document.createElement('div');
         imageContainer.className = 'post-images';
-
+        
         imageUrls.forEach(url => {
             if (url.trim()) {
                 const imgWrapper = document.createElement('div');
