@@ -79,20 +79,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingOverlay = document.querySelector('.loading-overlay');
     const floatingMenu = document.querySelector('.floating-menu');
 
-    // 에디터 포커스 이벤트 처리
-    editor.addEventListener('focus', () => {
+    // floatingMenu 항상 보이게 스타일 적용 (JS로 토글하지 않음)
+    if (floatingMenu) {
         floatingMenu.style.opacity = '1';
         floatingMenu.style.visibility = 'visible';
-    });
-
-    editor.addEventListener('blur', (e) => {
-        // 포맷 메뉴를 클릭한 경우는 제외
-        if (!e.relatedTarget || !e.relatedTarget.closest('.floating-menu')) {
-            floatingMenu.style.opacity = '0';
-            floatingMenu.style.visibility = 'hidden';
-            formatMenu.classList.remove('active');
-        }
-    });
+    }
 
     // 서식 메뉴 토글
     formatBtn.addEventListener('click', (e) => {
@@ -145,11 +136,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (newElement) {
-            // 현재 블록이 있는 경우, 그 뒤에 새 요소 삽입
-            if (currentBlock && currentBlock.parentNode) {
+            const isInEditor = editor.contains(range.startContainer);
+            if (isInEditor && currentBlock && currentBlock.parentNode) {
                 currentBlock.parentNode.insertBefore(newElement, currentBlock.nextSibling);
             } else {
-                // 현재 블록이 없는 경우, 에디터 끝에 삽입
                 editor.appendChild(newElement);
             }
             

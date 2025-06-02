@@ -319,7 +319,7 @@ async function deletePost(post) {
 
         if (result.status === 'success') {
             alert('삭제가 완료되었습니다.');
-            location.href = '/';
+            location.href = './';
         } else {
             throw new Error(result.message || '삭제 실패');
         }

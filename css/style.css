@@ -805,15 +805,9 @@ footer {
     bottom: 2rem;
     right: 2rem;
     z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-/* 에디터 포커스 시 플로팅 메뉴 표시 */
-.notion-editor:focus ~ .floating-menu {
     opacity: 1;
     visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .floating-btn {
