@@ -273,8 +273,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 발행하기
-    publishBtn.addEventListener('click', async function() {
+    // 발행/수정하기
+    publishBtn.addEventListener('click', async function () {
         const title = titleInput.value.trim();
         if (!title) {
             alert('제목을 입력해주세요.');
@@ -289,47 +289,42 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        const isEdit = new URLSearchParams(window.location.search).get('edit') === '1';
+        const post = isEdit ? JSON.parse(localStorage.getItem('editPost')) : null;
+
         try {
             toggleLoading(true);
 
-            // 에디터 내의 모든 이미지 찾기
             const images = editor.querySelectorAll('img');
             const uploadedUrls = [];
             let processedImages = 0;
 
-            // 각 이미지 처리
             for (const img of images) {
                 if (img.src.startsWith('data:')) {
-                    try {
-                        const file = await base64ToFile(
-                            img.src,
-                            `image_${processedImages + 1}.${img.src.split(';')[0].split('/')[1]}`
-                        );
-                        
-                        if (file.size > MAX_FILE_SIZE) {
-                            throw new Error(`이미지 크기가 5MB를 초과합니다: ${file.name}`);
-                        }
+                    const file = await base64ToFile(
+                        img.src,
+                        `image_${processedImages + 1}.${img.src.split(';')[0].split('/')[1]}`
+                    );
 
-                        const uploadedUrl = await uploadImage(file);
-                        uploadedUrls.push(uploadedUrl);
-                        img.src = uploadedUrl;
-                        processedImages++;
-                    } catch (error) {
-                        console.error('Image processing error:', error);
-                        alert(`이미지 업로드 중 오류가 발생했습니다: ${error.message}`);
-                        return;
+                    if (file.size > MAX_FILE_SIZE) {
+                        throw new Error(`이미지 크기가 5MB를 초과합니다: ${file.name}`);
                     }
+
+                    const uploadedUrl = await uploadImage(file);
+                    uploadedUrls.push(uploadedUrl);
+                    img.src = uploadedUrl;
+                    processedImages++;
                 } else {
                     uploadedUrls.push(img.src);
                 }
             }
 
-            // 포스트 데이터 전송
             const postData = {
                 title: title,
                 content: editor.innerHTML,
                 imageUrl: uploadedUrls.join(','),
-                timestamp: new Date().toISOString()
+                timestamp: isEdit && post ? post.timestamp : new Date().toISOString(),
+                ...(isEdit ? { type: 'update' } : {})
             };
 
             const response = await fetch(SCRIPT_WEBAPP_URL, {
@@ -341,19 +336,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify(postData)
             });
 
-            if (!response.ok) {
-                throw new Error(`포스트 저장 실패 (${response.status})`);
-            }
-
             const result = await response.json();
             if (result.status !== "success") {
-                throw new Error(result.message || '포스트 저장 실패');
+                throw new Error(result.message || (isEdit ? '수정 실패' : '저장 실패'));
             }
 
+            alert(isEdit ? '수정 완료되었습니다.' : '발행 완료되었습니다.');
             window.location.href = '/';
         } catch (error) {
-            console.error('발행 실패:', error);
-            alert('발행에 실패했습니다. 다시 시도해주세요.');
+            console.error(isEdit ? '수정 실패:' : '발행 실패:', error);
+            alert(isEdit ? '수정에 실패했습니다.' : '발행에 실패했습니다.');
         } finally {
             toggleLoading(false);
         }
@@ -429,4 +421,17 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.readAsDataURL(file);
         }
     }
-}); 
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const isEdit = params.get('edit') === '1';
+    if (isEdit) {
+        const post = JSON.parse(localStorage.getItem('editPost'));
+        if (post) {
+            document.getElementById('title-input').value = post.title;
+            document.getElementById('editor').innerHTML = post.content;
+            document.getElementById('publish-btn').textContent = '수정 완료';
+        }
+    }
+});

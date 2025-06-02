@@ -8,8 +8,9 @@ const SHEET_NAME = 'Posts'; // 시트 이름
 const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwKf419HOph2rBS0aCHCZ18dUAKyik_xUv7VUcUIEB669lB9Vw8z0EYoDVa45HTlEZfEw/exec';
 const CACHE_KEY = 'blog_posts_cache';
 const CACHE_TIMESTAMP_KEY = 'blog_posts_cache_timestamp';
-const CACHE_DURATION = 5 * 60 * 1000; // 5분 캐시 유효기간
-const SYNC_INTERVAL = 5000; // 5초마다 동기화
+const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000; // 5분 캐시 유효기간
+const SYNC_INTERVAL = 3000; // 5초마다 동기화
+const imageCache = new Map(); // 이미지 캐시
 
 let allPosts = []; // 모든 포스트 데이터 저장
 let mainContentCache = ''; // 메인 컨텐츠 캐시
@@ -45,6 +46,13 @@ function stopSync() {
     if (syncIntervalId) {
         clearInterval(syncIntervalId);
         syncIntervalId = null;
+    }
+}
+
+function toggleLoading(show) {
+    const overlay = document.querySelector('.loading-overlay');
+    if (overlay) {
+        overlay.style.display = show ? 'flex' : 'none';
     }
 }
 
@@ -209,9 +217,20 @@ function createPostCard(post, index) {
             if (url.trim()) {
                 const imgWrapper = document.createElement('div');
                 imgWrapper.className = 'image-wrapper';
-                
+
                 const img = document.createElement('img');
-                img.src = url.trim();
+                const fileIdMatch = url.trim().match(/id=([^&]+)/);
+                const fileId = fileIdMatch ? fileIdMatch[1] : null;
+
+                if (fileId && imageCache.has(fileId)) {
+                    img.src = imageCache.get(fileId);
+                } else if (fileId) {
+                    const cachedUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+                    img.src = cachedUrl;
+                    imageCache.set(fileId, cachedUrl);
+                } else {
+                    img.src = url.trim(); // fallback
+                }
                 img.alt = post.title;  // 이미지 대체 텍스트 추가
                 img.onerror = () => handleImageError(imgWrapper);
                 imgWrapper.appendChild(img);
@@ -251,30 +270,71 @@ function createPostCard(post, index) {
     return card;
 }
 
+// main.js에 삭제 및 수정 버튼 추가
 function showPostDetail(post, index) {
-    // 현재 페이지의 내용을 캐시에 저장
     if (!mainContentCache) {
         mainContentCache = document.querySelector('main').innerHTML;
     }
-    
-    // 상세 페이지 HTML 생성
+
     const detailHTML = `
         <div class="post-detail">
             <div class="post-detail-header">
                 <button class="back-button" onclick="window.history.back()">← 뒤로가기</button>
                 <h1>${post.title}</h1>
+                <p class="post-date">${new Date(post.timestamp).toLocaleDateString()}</p>
             </div>
             <div class="post-detail-content">
                 <p>${post.content}</p>
             </div>
+            <div class="post-detail-controls">
+                <button class="edit-button" onclick="editPost(${index})">수정</button>
+                <button class="delete-button" onclick='deletePost(${JSON.stringify(post)})'>삭제</button>
+            </div>
         </div>
     `;
-    
-    // 메인 컨텐츠 교체
+
     document.querySelector('main').innerHTML = detailHTML;
-    
-    // URL 히스토리 추가
     window.history.pushState({ type: 'post', index: index }, '', `#post-${index}`);
+}
+
+// 삭제 버튼 클릭 시 실행되는 함수
+async function deletePost(post) {
+    try {
+        toggleLoading(true);
+        console.log('[삭제 요청] timestamp:', post.timestamp);
+
+        const res = await fetch(WEBAPP_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify({
+                type: 'delete',
+                timestamp: post.timestamp
+            })
+        });
+
+        const resultText = await res.text();
+        const result = JSON.parse(resultText);
+
+        if (result.status === 'success') {
+            alert('삭제가 완료되었습니다.');
+            location.href = '/';
+        } else {
+            throw new Error(result.message || '삭제 실패');
+        }
+    } catch (err) {
+        console.error('삭제 실패:', err);
+        alert('삭제 실패: ' + err.message);
+    } finally {
+        toggleLoading(false);
+    }
+}
+
+function editPost(index) {
+    const post = allPosts[index];
+    localStorage.setItem('editPost', JSON.stringify(post));
+    window.location.href = 'write.html?edit=1';
 }
 
 // 브라우저 뒤로가기 처리
