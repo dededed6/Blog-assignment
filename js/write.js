@@ -192,12 +192,17 @@ document.addEventListener('DOMContentLoaded', function() {
     formatItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
+            const format = item.getAttribute('data-format');
+
             if (savedRange) {
                 const selection = window.getSelection();
                 selection.removeAllRanges();
                 selection.addRange(savedRange);
+
+                const editor = document.getElementById('editor');
+                editor.focus(); // Ensure focus is back in editor
             }
-            const format = item.getAttribute('data-format');
+
             applyFormat(format);
         });
     });
