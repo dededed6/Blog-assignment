@@ -231,12 +231,14 @@ function createPostCard(post, index) {
                 } else {
                     img.src = url.trim(); // fallback
                 }
+                img.loading = 'lazy';  // 지연 로딩
                 img.alt = post.title;  // 이미지 대체 텍스트 추가
                 img.onerror = () => handleImageError(imgWrapper);
                 imgWrapper.appendChild(img);
                 imageContainer.appendChild(imgWrapper);
             }
         });
+        
 
         card.appendChild(imageContainer);
     }

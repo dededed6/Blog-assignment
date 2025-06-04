@@ -1,0 +1,144 @@
+/* css/pages/home.css */
+
+/* --- Post List Styles --- */
+.posts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.post-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+
+.post-card:hover {
+    transform: translateY(-4px);
+}
+
+.post-images {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.image-wrapper {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+}
+
+.post-images img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.post-card-content {
+    padding: 1rem;
+}
+
+.post-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.post-content {
+    color: #666;
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    margin-bottom: 0.5rem;
+}
+
+.post-date {
+    color: #868e96;
+    font-size: 0.8rem;
+}
+
+/* --- Post Detail View --- */
+.post-detail {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.post-detail-header {
+    margin-bottom: 2rem;
+}
+
+.post-detail-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.post-detail-images img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.post-detail-content {
+    line-height: 1.6;
+}
+
+/* --- Responsive Home Page Adjustments --- */
+@media (max-width: 768px) {
+    .posts-container {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        padding: 0 0.5rem;
+        /* Reduce padding for smaller screens */
+    }
+
+    .post-detail {
+        padding: 1rem;
+        margin: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .posts-container {
+        grid-template-columns: 1fr;
+        /* Single column layout */
+        gap: 1rem;
+        padding: 0 0.5rem;
+    }
+
+    .post-card {
+        margin-bottom: 1rem;
+        /* Add some space between cards */
+    }
+
+    .post-images img {
+        height: 180px;
+        /* Slightly smaller images */
+    }
+
+    .post-title {
+        font-size: 1.1rem;
+    }
+
+    .post-content {
+        font-size: 0.85rem;
+    }
+
+    .post-detail {
+        padding: 1rem;
+        margin: 0.5rem;
+    }
+}

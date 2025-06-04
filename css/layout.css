@@ -1,0 +1,174 @@
+/* css/layout.css */
+
+/* --- Navigation --- */
+nav {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 34px;
+}
+
+.nav-container h1 {
+    font-size: 1.5rem;
+}
+
+/* Nav Controls */
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+}
+
+/* Nav Right (for search bar/menu) */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 1rem;
+}
+
+/* --- Main Content Area --- */
+main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* --- Footer --- */
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: #868e96;
+    font-size: 0.9rem;
+}
+
+/* --- Loading Overlay --- */
+.loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* --- Responsive Layout Adjustments --- */
+@media (max-width: 768px) {
+    .nav-container {
+        padding: 0.5rem 1rem;
+        position: relative;
+        /* For absolute positioning of nav-right */
+    }
+
+    .nav-container h1 {
+        font-size: 1.25rem;
+    }
+
+    .nav-controls {
+        gap: 0.5rem;
+    }
+
+    .nav-right {
+        display: none;
+        /* Hidden by default on mobile, shown by JS */
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 300px;
+        /* Adjust as needed */
+        background-color: white;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+        border-radius: 0 0 4px 4px;
+        animation: slideDown 0.2s ease-out;
+    }
+
+    .nav-right.active {
+        display: block;
+        /* Shown when active by JS */
+    }
+
+    main {
+        margin: 1rem auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-container {
+        flex-direction: row;
+        /* Ensure elements remain in row */
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        min-height: 54px;
+        /* Ensure sufficient height */
+    }
+
+    .nav-container h1 {
+        font-size: 1.25rem;
+    }
+
+    .nav-right {
+        width: calc(100% - 2rem);
+        /* Adjust width to fit padding */
+        left: 1rem;
+        right: 1rem;
+        border-radius: 4px;
+        margin-top: 0.5rem;
+        /* Space below nav */
+    }
+
+    main {
+        margin: 0.5rem auto;
+        padding: 0 0.5rem;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

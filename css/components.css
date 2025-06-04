@@ -1,0 +1,274 @@
+/* css/components.css */
+
+/* --- Buttons --- */
+.submit-btn,
+.write-btn {
+    /* Combined styles for primary buttons */
+    background-color: #12b886;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    /* For write-btn (link) */
+    display: inline-block;
+    /* For write-btn (link) */
+    transition: background-color 0.2s;
+}
+
+.submit-btn:hover,
+.write-btn:hover {
+    background-color: #0ca678;
+}
+
+.cancel-btn {
+    background-color: #868e96;
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    margin-left: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    /* Added for consistency */
+    transition: background-color 0.2s;
+}
+
+.cancel-btn:hover {
+    background-color: #747f8a;
+}
+
+.edit-button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #007bff;
+    background-color: white;
+    color: #007bff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.edit-button:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.delete-button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #dc3545;
+    background-color: white;
+    color: #dc3545;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.delete-button:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.back-button {
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    transition: background-color 0.2s;
+}
+
+.back-button:hover {
+    background-color: #e9ecef;
+}
+
+/* --- Search Bar --- */
+.search-bar {
+    position: relative;
+    width: 200px;
+    /* Default width */
+}
+
+.search-bar input {
+    width: 100%;
+    /* Fill parent */
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.search-bar input:focus {
+    width: 300px;
+    /* Expands on focus */
+    border-color: #12b886;
+    outline: none;
+    /* Remove default outline */
+}
+
+/* Search Toggle Button (for mobile) */
+.search-toggle-btn {
+    display: none;
+    /* Hidden by default */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #666;
+    transition: color 0.2s;
+    border-radius: 4px;
+}
+
+.search-toggle-btn:hover {
+    color: #12b886;
+    background-color: rgba(18, 184, 134, 0.05);
+}
+
+.search-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.search-toggle-btn.active {
+    color: #12b886;
+    background-color: rgba(18, 184, 134, 0.1);
+}
+
+/* --- Hamburger Menu Button (if used, not in provided HTML) --- */
+.hamburger-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1000;
+}
+
+.hamburger-btn span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #333;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+.hamburger-btn.active span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger-btn.active span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.hamburger-btn.active span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+/* --- Loading State Messages --- */
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.loading::after {
+    content: '';
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid #ddd;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    animation: spin 1s linear infinite;
+}
+
+/* --- No Posts Message --- */
+.no-posts {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+    font-size: 1.1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 2rem;
+}
+
+/* --- Search Result Highlight --- */
+mark {
+    background-color: #fff3cd;
+    padding: 0.2em;
+    border-radius: 2px;
+}
+
+/* --- Responsive Component Adjustments --- */
+@media (max-width: 768px) {
+
+    .write-btn,
+    .submit-btn,
+    .cancel-btn,
+    .edit-button,
+    .delete-button,
+    .back-button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .search-toggle-btn {
+        display: flex;
+        /* Shown on mobile */
+        align-items: center;
+        justify-content: center;
+    }
+
+    .search-bar input {
+        width: 100%;
+        /* Full width in mobile nav */
+        padding: 0.6rem 1rem;
+        font-size: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        transition: border-color 0.2s;
+    }
+
+    .search-bar input:focus {
+        width: 100%;
+        /* No expansion, just border color change */
+        border-color: #12b886;
+        outline: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .write-btn {
+        font-size: 0.85rem;
+        padding: 0.35rem 0.7rem;
+        width: 100%;
+        /* Full width for the button in mobile nav */
+        text-align: center;
+    }
+
+    /* iOS auto-zoom prevention for inputs */
+    .search-bar input,
+    .search-bar input:focus,
+    .form-group input,
+    .form-group textarea {
+        font-size: 16px;
+    }
+}
