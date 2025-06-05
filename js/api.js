@@ -85,7 +85,7 @@ export async function fetchPosts() {
 }
 
 // 포스트 삭제 (메인 페이지용)
-export async function deletePost(post) {
+export async function deletePost(post_time) {
     try {
         toggleLoading(true);
         const res = await fetch(SCRIPT_WEBAPP_URL, {
@@ -95,7 +95,7 @@ export async function deletePost(post) {
             },
             body: JSON.stringify({
                 type: 'delete',
-                timestamp: post.timestamp
+                timestamp: post_time
             })
         });
 
@@ -185,7 +185,7 @@ export async function publishOrUpdatePost(titleInput, editor) {
         }
 
         alert(isEdit ? '수정 완료되었습니다.' : '포스트 완료되었습니다.');
-        window.location.href = '/';
+        window.location.href = './';
     } catch (error) {
         console.error(isEdit ? '수정 실패:' : '발행 실패:', error);
         alert(isEdit ? '수정에 실패했습니다.' : '포스트에 실패했습니다.');

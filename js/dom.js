@@ -135,7 +135,7 @@ export function showPostDetail(post, index) {
             <br>
             <div>
                 <button class="edit-button" onclick="window.editPost(${index})">수정</button>
-                <button class="delete-button" onclick='window.deletePost(${JSON.stringify(post)})'>삭제</button>
+                <button class="delete-button" onclick='window.deletePost(${post.timestamp})'>삭제</button>
             </div>
         </div>
     `;
