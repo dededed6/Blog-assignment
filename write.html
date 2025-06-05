@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Celleb - 에디터</title>
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
@@ -18,6 +18,7 @@
 </head>
 
 <body>
+    <!-- 헤더 및 내비게이션 -->
     <header>
         <nav>
             <div class="nav-container">
@@ -34,7 +35,9 @@
         </nav>
     </header>
 
+    <!-- 메인 에디터 영역 -->
     <main>
+        <!-- 제목 입력 + 본문 에디터 + 이미지 업로드 -->
         <div class="editor-container">
             <input type="text" id="title-input" class="title-input" placeholder="제목을 입력해주세요">
 
@@ -48,6 +51,7 @@
             </div>
         </div>
 
+        <!-- 서식 플로팅 메뉴 -->
         <div class="floating-menu">
             <button id="format-btn" class="floating-btn" aria-label="서식 메뉴">
                 <svg viewBox="0 0 24 24" width="24" height="24">
@@ -66,6 +70,23 @@
                         <path fill="none" stroke="currentColor" stroke-width="2" d="M6 4v16M18 4v16M6 12h12" />
                     </svg>
                     <span>중간 제목</span>
+                </button><button class="format-item" data-format="ul">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="none" stroke="currentColor" stroke-width="2" d="M8 6h12M8 12h12M8 18h12" />
+                        <circle cx="4" cy="6" r="1" fill="currentColor" />
+                        <circle cx="4" cy="12" r="1" fill="currentColor" />
+                        <circle cx="4" cy="18" r="1" fill="currentColor" />
+                    </svg>
+                    <span>글머리 기호</span>
+                </button>
+                <button class="format-item" data-format="ol">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="none" stroke="currentColor" stroke-width="2" d="M8 6h12M8 12h12M8 18h12" />
+                        <text x="3" y="7" font-family="sans-serif" font-size="6" fill="currentColor" text-anchor="middle">1.</text>
+                        <text x="3" y="13" font-family="sans-serif" font-size="6" fill="currentColor" text-anchor="middle">2.</text>
+                        <text x="3" y="19" font-family="sans-serif" font-size="6" fill="currentColor" text-anchor="middle">3.</text>
+                    </svg>
+                    <span>번호 매기기</span>
                 </button>
                 <button class="format-item" data-format="blockquote">
                     <svg viewBox="0 0 24 24" width="24" height="24">
@@ -93,6 +114,7 @@
         </div>
     </main>
 
+    <!-- 로딩 오버레이 -->
     <div class="loading-overlay">
         <div class="loading-spinner"></div>
     </div>

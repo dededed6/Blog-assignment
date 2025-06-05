@@ -1,12 +1,9 @@
-// js/write.js (작성 페이지 전용 앱 로직)
+import { toggleLoading } from './dom.js';
+import { publishOrUpdatePost } from './api.js';
+import { applyFormat } from './editor.js';
+import { handleImageFiles } from './image_manager.js';
 
-// --- Imports ---
-import { toggleLoading } from './dom.js'; // dom.js에서 임포트
-import { publishOrUpdatePost } from './api.js'; // api.js에서 publishOrUpdatePost 임포트
-import { applyFormat, handleCodeBlockKeydown, setupEditorEnterKey } from './editor.js'; // editor.js에서 임포트
-import { handleImageFiles } from './image_manager.js'; // image_manager.js에서 임포트
-
-export let savedRange = null; // To preserve selection for formatting
+export let savedRange = null; // 서식 입력시 선택 영역 저장용
 
 document.addEventListener('DOMContentLoaded', function () {
     const editor = document.getElementById('editor');
@@ -23,23 +20,24 @@ document.addEventListener('DOMContentLoaded', function () {
         floatingMenu.style.visibility = 'visible';
     }
 
-    // --- Event Listeners ---
+    // 서식 메뉴
     formatBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         const selection = window.getSelection();
         if (selection.rangeCount > 0) {
-            savedRange = selection.getRangeAt(0);
+            savedRange = selection.getRangeAt(0); //  선택 영역 저장
         }
-        editor.focus();
-        formatMenu.classList.toggle('active');
+        formatMenu.classList.toggle('active'); // 메뉴 표시
     });
 
+    // 서식 메뉴 외부 클릭 시 메뉴 닫기
     document.addEventListener('click', (e) => {
         if (!formatMenu.contains(e.target) && !formatBtn.contains(e.target)) {
             formatMenu.classList.remove('active');
         }
     });
 
+    // 서식 입력
     formatItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
@@ -56,8 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    setupEditorEnterKey(editor);
-
+    // 드래그 앤 드롭
     editor.addEventListener('dragover', function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -96,10 +93,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     publishBtn.addEventListener('click', async function () {
-        await publishOrUpdatePost(titleInput, editor); // api.js의 publishOrUpdatePost 호출
+        await publishOrUpdatePost(titleInput, editor); // 업로드
     });
 
-    // --- Edit Mode Initialization ---
+    // 수정 모드일 때 에디터 초기화
     const params = new URLSearchParams(window.location.search);
     const isEdit = params.get('edit') === '1';
     if (isEdit) {
@@ -112,10 +109,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (!editor.querySelector('p')) {
-        editor.innerHTML = '<p><br></p>';
+        editor.innerHTML = '<p></p>';
     }
 });
 
 // window에 전역 함수 노출 (HTML 인라인 이벤트 핸들러용)
 window.toggleLoading = toggleLoading;
-window.handleCodeBlockKeydown = handleCodeBlockKeydown; // 에디터 특정 이벤트 핸들러

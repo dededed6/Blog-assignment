@@ -1,10 +1,7 @@
-// js/image_manager.js
+import { MAX_FILE_SIZE } from './variables.js';
 
-import { MAX_FILE_SIZE } from './variables.js'; // variables.js에서 임포트
-// uploadImage 함수는 api.js로 통합되었으므로, 여기서 직접 호출하지 않습니다.
-// 대신 publishOrUpdatePost 함수 (api.js에 있음)가 이미지를 업로드합니다.
-// handleImageFiles는 이미지를 에디터에 임시로 삽입하는 역할만 합니다.
-
+// publishOrUpdatePost 함수 (api.js)가 이미지를 업로드
+// handleImageFiles는 이미지를 에디터에 임시로 삽입하는 함수
 export function handleImageFiles(files, editor) {
     if (!files || files.length === 0) return;
 

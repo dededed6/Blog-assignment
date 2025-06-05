@@ -1,7 +1,5 @@
-// js/api.js
-
-import { SCRIPT_WEBAPP_URL, MAX_FILE_SIZE } from './variables.js'; // variables.js에서 임포트
-import { toggleLoading } from './dom.js'; // dom.js에서 임포트
+import { SCRIPT_WEBAPP_URL, MAX_FILE_SIZE } from './variables.js';
+import { toggleLoading } from './dom.js';
 
 // Base64 이미지를 File 객체로 변환
 async function base64ToFile(dataUrl, filename) {
@@ -82,7 +80,7 @@ export async function fetchPosts() {
         }
     } catch (error) {
         console.error('Error fetching posts:', error);
-        throw error; // Propagate error for cache fallback
+        throw error;
     }
 }
 
@@ -106,7 +104,7 @@ export async function deletePost(post) {
 
         if (result.status === 'success') {
             alert('삭제가 완료되었습니다.');
-            location.href = './'; // Refresh or navigate to main page
+            location.href = './'; // 메인 페이지로 이동
         } else {
             throw new Error(result.message || '삭제 실패');
         }
@@ -186,11 +184,11 @@ export async function publishOrUpdatePost(titleInput, editor) {
             throw new Error(result.message || (isEdit ? '수정 실패' : '저장 실패'));
         }
 
-        alert(isEdit ? '수정 완료되었습니다.' : '발행 완료되었습니다.');
+        alert(isEdit ? '수정 완료되었습니다.' : '포스트 완료되었습니다.');
         window.location.href = '/';
     } catch (error) {
         console.error(isEdit ? '수정 실패:' : '발행 실패:', error);
-        alert(isEdit ? '수정에 실패했습니다.' : '발행에 실패했습니다.');
+        alert(isEdit ? '수정에 실패했습니다.' : '포스트에 실패했습니다.');
     } finally {
         toggleLoading(false);
     }

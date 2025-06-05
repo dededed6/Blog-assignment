@@ -1,7 +1,5 @@
-// js/search.js
-
-import { allPosts } from './app.js'; // app.js의 allPosts를 임포트
-import { renderPosts } from './dom.js'; // dom.js에서 renderPosts 임포트
+import { allPosts } from './app.js';
+import { renderPosts } from './dom.js';
 
 // 검색 기능 설정
 export function setupSearch() {

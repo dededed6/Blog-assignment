@@ -1,6 +1,4 @@
-/* css/layout.css */
-
-/* --- Navigation --- */
+/* 네비게이션 바 */
 nav {
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -24,7 +22,6 @@ nav {
     font-size: 1.5rem;
 }
 
-/* Nav Controls */
 .nav-controls {
     display: flex;
     align-items: center;
@@ -32,7 +29,6 @@ nav {
     margin-left: auto;
 }
 
-/* Nav Right (for search bar/menu) */
 .nav-right {
     display: flex;
     align-items: center;
@@ -40,14 +36,14 @@ nav {
     margin: 0 1rem;
 }
 
-/* --- Main Content Area --- */
+/* 메인 콘텐츠 영역 */
 main {
     max-width: 1200px;
     margin: 2rem auto;
     padding: 0 1rem;
 }
 
-/* --- Footer --- */
+/* 푸터 */
 footer {
     text-align: center;
     padding: 2rem;
@@ -55,7 +51,7 @@ footer {
     font-size: 0.9rem;
 }
 
-/* --- Loading Overlay --- */
+/* 로딩 오버레이 */
 .loading-overlay {
     display: none;
     position: fixed;
@@ -88,12 +84,11 @@ footer {
     }
 }
 
-/* --- Responsive Layout Adjustments --- */
+/* 반응형 스타일 */
 @media (max-width: 768px) {
     .nav-container {
         padding: 0.5rem 1rem;
         position: relative;
-        /* For absolute positioning of nav-right */
     }
 
     .nav-container h1 {
@@ -106,12 +101,10 @@ footer {
 
     .nav-right {
         display: none;
-        /* Hidden by default on mobile, shown by JS */
         position: absolute;
         top: 100%;
         right: 0;
         width: 300px;
-        /* Adjust as needed */
         background-color: white;
         padding: 1rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -122,7 +115,6 @@ footer {
 
     .nav-right.active {
         display: block;
-        /* Shown when active by JS */
     }
 
     main {
@@ -130,15 +122,14 @@ footer {
     }
 }
 
+/* 반응형 스타일 */
 @media (max-width: 480px) {
     .nav-container {
         flex-direction: row;
-        /* Ensure elements remain in row */
         justify-content: space-between;
         align-items: center;
         padding: 0.5rem 1rem;
         min-height: 54px;
-        /* Ensure sufficient height */
     }
 
     .nav-container h1 {
@@ -147,12 +138,10 @@ footer {
 
     .nav-right {
         width: calc(100% - 2rem);
-        /* Adjust width to fit padding */
         left: 1rem;
         right: 1rem;
         border-radius: 4px;
         margin-top: 0.5rem;
-        /* Space below nav */
     }
 
     main {

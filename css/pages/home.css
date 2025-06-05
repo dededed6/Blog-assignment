@@ -1,12 +1,11 @@
-/* css/pages/home.css */
-
-/* --- Post List Styles --- */
+/* 게시물 목록 그리드 */
 .posts-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 2rem;
 }
 
+/* 게시물 카드 */
 .post-card {
     background: white;
     border-radius: 8px;
@@ -65,7 +64,7 @@
     font-size: 0.8rem;
 }
 
-/* --- Post Detail View --- */
+/* 게시물 상세 페이지 */
 .post-detail {
     max-width: 800px;
     margin: 0 auto;
@@ -96,13 +95,12 @@
     line-height: 1.6;
 }
 
-/* --- Responsive Home Page Adjustments --- */
+/* 태블릿 반응형 */
 @media (max-width: 768px) {
     .posts-container {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 1rem;
         padding: 0 0.5rem;
-        /* Reduce padding for smaller screens */
     }
 
     .post-detail {
@@ -111,22 +109,20 @@
     }
 }
 
+/* 모바일 반응형 */
 @media (max-width: 480px) {
     .posts-container {
         grid-template-columns: 1fr;
-        /* Single column layout */
         gap: 1rem;
         padding: 0 0.5rem;
     }
 
     .post-card {
         margin-bottom: 1rem;
-        /* Add some space between cards */
     }
 
     .post-images img {
         height: 180px;
-        /* Slightly smaller images */
     }
 
     .post-title {

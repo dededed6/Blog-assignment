@@ -1,14 +1,10 @@
-// js/app.js (메인 페이지 전용 앱 로직)
-
-// Google Visualization API 로드
 google.charts.load('current', { 'packages': ['corechart'] });
 google.charts.setOnLoadCallback(initialize);
 
-// --- Imports ---
-import { CACHE_KEY, CACHE_TIMESTAMP_KEY, CACHE_DURATION, SYNC_INTERVAL } from './variables.js'; // variables.js에서 임포트
-import { toggleLoading, renderPosts, showPostDetail, restoreMainContent } from './dom.js'; // dom.js에서 임포트
-import { fetchPosts, deletePost, convertToThumbnailUrl } from './api.js'; // api.js에서 임포트
-import { setupSearch, initializeSearchMenu } from './search.js'; // search.js에서 임포트
+import { CACHE_KEY, CACHE_TIMESTAMP_KEY, CACHE_DURATION, SYNC_INTERVAL } from './variables.js';
+import { toggleLoading, renderPosts, showPostDetail, restoreMainContent } from './dom.js';
+import { fetchPosts, deletePost, convertToThumbnailUrl } from './api.js';
+import { setupSearch, initializeSearchMenu } from './search.js';
 
 // --- Global Variables ---
 export let allPosts = []; // 모든 포스트 데이터 저장

@@ -1,9 +1,6 @@
-/* css/components.css */
-
-/* --- Buttons --- */
+/* 등록/작성 버튼 */
 .submit-btn,
 .write-btn {
-    /* Combined styles for primary buttons */
     background-color: #12b886;
     color: white;
     border: none;
@@ -13,9 +10,7 @@
     font-size: 1rem;
     font-weight: 600;
     text-decoration: none;
-    /* For write-btn (link) */
     display: inline-block;
-    /* For write-btn (link) */
     transition: background-color 0.2s;
 }
 
@@ -24,6 +19,7 @@
     background-color: #0ca678;
 }
 
+/* 취소 버튼 */
 .cancel-btn {
     background-color: #868e96;
     color: white;
@@ -34,7 +30,6 @@
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    /* Added for consistency */
     transition: background-color 0.2s;
 }
 
@@ -42,6 +37,7 @@
     background-color: #747f8a;
 }
 
+/* 수정 버튼 */
 .edit-button {
     padding: 0.5rem 1rem;
     border: 1px solid #007bff;
@@ -58,6 +54,7 @@
     color: white;
 }
 
+/* 삭제 버튼 */
 .delete-button {
     padding: 0.5rem 1rem;
     border: 1px solid #dc3545;
@@ -74,6 +71,7 @@
     color: white;
 }
 
+/* 뒤로 가기 버튼 */
 .back-button {
     padding: 0.5rem 1rem;
     background-color: #f8f9fa;
@@ -88,16 +86,14 @@
     background-color: #e9ecef;
 }
 
-/* --- Search Bar --- */
+/* 검색 바 */
 .search-bar {
     position: relative;
     width: 200px;
-    /* Default width */
 }
 
 .search-bar input {
     width: 100%;
-    /* Fill parent */
     padding: 0.5rem 1rem;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -107,13 +103,11 @@
 
 .search-bar input:focus {
     width: 300px;
-    /* Expands on focus */
     border-color: #12b886;
     outline: none;
-    /* Remove default outline */
 }
 
-/* Search Toggle Button (for mobile) */
+/* 검색 토글 버튼 (모바일) */
 .search-toggle-btn {
     display: none;
     /* Hidden by default */
@@ -142,7 +136,7 @@
     background-color: rgba(18, 184, 134, 0.1);
 }
 
-/* --- Hamburger Menu Button (if used, not in provided HTML) --- */
+/* 햄버거 버튼 (모바일) */
 .hamburger-btn {
     display: none;
     flex-direction: column;
@@ -178,7 +172,7 @@
     transform: translateY(-9px) rotate(-45deg);
 }
 
-/* --- Loading State Messages --- */
+/* 로딩 표시 */
 .loading {
     text-align: center;
     padding: 2rem;
@@ -199,7 +193,7 @@
     animation: spin 1s linear infinite;
 }
 
-/* --- No Posts Message --- */
+/* 게시물 없음 표시 */
 .no-posts {
     text-align: center;
     padding: 3rem;
@@ -210,14 +204,14 @@
     margin: 2rem;
 }
 
-/* --- Search Result Highlight --- */
+/* 검색어 강조 */
 mark {
     background-color: #fff3cd;
     padding: 0.2em;
     border-radius: 2px;
 }
 
-/* --- Responsive Component Adjustments --- */
+/* 반응형 스타일 */
 @media (max-width: 768px) {
 
     .write-btn,
@@ -232,14 +226,12 @@ mark {
 
     .search-toggle-btn {
         display: flex;
-        /* Shown on mobile */
         align-items: center;
         justify-content: center;
     }
 
     .search-bar input {
         width: 100%;
-        /* Full width in mobile nav */
         padding: 0.6rem 1rem;
         font-size: 1rem;
         border: 1px solid #ddd;
@@ -249,22 +241,20 @@ mark {
 
     .search-bar input:focus {
         width: 100%;
-        /* No expansion, just border color change */
         border-color: #12b886;
         outline: none;
     }
 }
 
+/* 반응형 스타일 */
 @media (max-width: 480px) {
     .write-btn {
         font-size: 0.85rem;
         padding: 0.35rem 0.7rem;
         width: 100%;
-        /* Full width for the button in mobile nav */
         text-align: center;
     }
 
-    /* iOS auto-zoom prevention for inputs */
     .search-bar input,
     .search-bar input:focus,
     .form-group input,

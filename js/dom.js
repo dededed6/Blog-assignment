@@ -1,8 +1,5 @@
-// js/dom.js
-
-// Import necessary functions and constants from other modules
-import { deletePost, convertToThumbnailUrl } from './api.js'; // api.js에서 deletePost, convertToThumbnailUrl 임포트
-import { setupSearch } from './search.js'; // search.js에서 setupSearch 임포트
+import { deletePost, convertToThumbnailUrl } from './api.js';
+import { setupSearch } from './search.js';
 
 export function toggleLoading(show) {
     const overlay = document.querySelector('.loading-overlay');
@@ -37,9 +34,6 @@ export function renderPosts(posts) { // `allPosts`를 직접 임포트하지 않
     container.innerHTML = sortedPosts.length ? '' : '<div class="no-posts">작성된 포스트가 없습니다.</div>';
 
     sortedPosts.forEach((post, displayIndex) => {
-        // `allPosts`는 `app.js`에서 관리되는 전역 변수이므로,
-        // 이곳에서는 post 객체를 직접 사용하고, showPostDetail 호출 시 post와 index를 넘겨줍니다.
-        // `originalIndex`는 이제 `posts` 배열 내에서의 인덱스가 됩니다.
         const originalIndex = posts.findIndex(p =>
             p.title === post.title &&
             p.content === post.content &&
@@ -50,8 +44,6 @@ export function renderPosts(posts) { // `allPosts`를 직접 임포트하지 않
     });
 
     // 메인 컨텐츠 캐시 업데이트
-    // `window.mainContentCache`는 `app.js`에서 직접 업데이트하도록 로직 이동
-    // 이 `dom.js` 파일에서는 DOM 조작에만 집중합니다.
 }
 
 // 포스트 카드 HTML 생성
@@ -117,10 +109,7 @@ function createPostCard(post, index) { // index를 인자로 받음
 
     card.addEventListener('click', () => {
         const postIndex = parseInt(card.getAttribute('data-post-index'));
-        // `allPosts`는 `app.js`의 전역 변수이므로 `window.allPosts`로 접근
-        if (window.allPosts && window.allPosts[postIndex]) {
-            showPostDetail(window.allPosts[postIndex], postIndex);
-        }
+        showPostDetail(window.allPosts[postIndex], postIndex);
     });
 
     return card;

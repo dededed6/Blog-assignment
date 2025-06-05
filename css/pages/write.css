@@ -1,15 +1,12 @@
-/* css/pages/write.css */
-
-/* --- Editor Container --- */
+/* 에디터 전체 컨테이너 */
 .editor-container {
     max-width: 900px;
     margin: 0 auto;
     padding: 2rem;
     min-height: calc(100vh - 54px);
-    /* Adjust height considering header/footer */
 }
 
-/* --- Title Input --- */
+/* 제목 입력창 */
 .title-input {
     width: 100%;
     font-size: 2.5rem;
@@ -32,11 +29,10 @@
     border-bottom-color: #12b886;
 }
 
-/* --- Notion-style Editor Area --- */
+/* 본문 에디터 */
 .notion-editor {
     width: 100%;
     min-height: calc(100vh - 250px);
-    /* Adjust height */
     outline: none;
     padding: 1rem 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -45,25 +41,20 @@
     color: #333;
 }
 
-/* Placeholder for empty editor paragraphs */
 .notion-editor p {
     margin: 0 0 1rem 0;
     min-height: 1.5em;
-    /* Ensure height for empty lines */
 }
-
 .notion-editor p:empty::before {
     content: '내용을 입력하세요...';
     color: #aaa;
 }
 
-/* Drag and Drop Highlight */
 .notion-editor.drag-over {
     background-color: rgba(18, 184, 134, 0.05);
     border: 2px dashed #12b886;
 }
 
-/* --- Editor Formatting Styles --- */
 .notion-editor h2 {
     font-size: 1.8rem;
     font-weight: 600;
@@ -113,13 +104,12 @@
     border: 1px solid #2d2d2d;
 }
 
-/* --- Image Upload & Preview --- */
+/* 이미지 업로드 영역 */
 .image-upload-container {
     margin: 1rem 0;
 }
 
 #image-upload {
-    /* Hidden file input */
     display: none;
 }
 
@@ -150,16 +140,14 @@
     margin-top: 0.25rem;
 }
 
-/* --- Floating Menu (Editor Toolbar) --- */
+/* 플로팅 메뉴 */
 .floating-menu {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
     z-index: 1000;
     opacity: 0;
-    /* Hidden by default */
     visibility: hidden;
-    /* Hidden by default */
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
@@ -194,18 +182,16 @@
     color: white;
 }
 
-/* Format Sub-Menu */
+/* 서식 도구 메뉴 */
 .format-menu {
     position: absolute;
     bottom: calc(100% + 1rem);
-    /* Position above floating button */
     right: 0;
     background: white;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     padding: 0.5rem;
     display: none;
-    /* Hidden by default */
     flex-direction: column;
     gap: 0.25rem;
     min-width: 200px;
@@ -213,7 +199,6 @@
 
 .format-menu.active {
     display: flex;
-    /* Shown when active */
     animation: slideUp 0.2s ease-out;
 }
 
@@ -259,7 +244,7 @@
     }
 }
 
-/* --- Responsive Write Page Adjustments --- */
+/* 반응형 스타일 */
 @media (max-width: 768px) {
     .editor-container {
         padding: 1rem;
@@ -299,6 +284,7 @@
     }
 }
 
+/* 반응형 스타일 */
 @media (max-width: 480px) {
     .editor-container {
         padding: 1rem 0.5rem;
