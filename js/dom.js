@@ -109,7 +109,9 @@ function createPostCard(post, index) { // index를 인자로 받음
 
     card.addEventListener('click', () => {
         const postIndex = parseInt(card.getAttribute('data-post-index'));
-        showPostDetail(window.allPosts[postIndex], postIndex);
+        if (window.allPosts && window.allPosts[postIndex]) {
+            showPostDetail(window.allPosts[postIndex], postIndex);
+        }
     });
 
     return card;
