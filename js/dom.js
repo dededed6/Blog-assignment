@@ -113,6 +113,7 @@ function createPostCard(post, index) { // index를 인자로 받음
             showPostDetail(window.allPosts[postIndex], postIndex);
         }
     });
+    console.log(`Post card created for index: ${index}`); // 디버깅용 로그
 
     return card;
 }
