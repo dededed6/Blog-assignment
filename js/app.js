@@ -19,7 +19,6 @@ function initialize() {
     setupSearch();
     startSync();
     initializeSearchMenu();
-    
 }
 
 // 캐시에서 포스트 불러오기
@@ -127,7 +126,6 @@ window.addEventListener('popstate', (event) => {
 });
 
 // window에 전역 함수 노출
-window.allPosts = allPosts; // 모든 포스트 데이터를 전역으로 노출
 window.toggleLoading = toggleLoading; // dom.js에서 임포트한 함수를 전역으로 노출
 window.editPost = (index) => {
     const post = allPosts[index];

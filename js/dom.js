@@ -1,4 +1,5 @@
 import { deletePost, convertToThumbnailUrl } from './api.js';
+import { allPosts } from './app.js';
 import { setupSearch } from './search.js';
 
 export function toggleLoading(show) {
@@ -109,10 +110,7 @@ function createPostCard(post, index) { // index를 인자로 받음
 
     card.addEventListener('click', () => {
         const postIndex = parseInt(card.getAttribute('data-post-index'));
-        if (window.allPosts && window.allPosts[postIndex]) {
-            showPostDetail(window.allPosts[postIndex], postIndex);
-            console.log(`Post clicked: ${post.title} (index: ${postIndex})`); // 디버깅용 로그
-        }
+        showPostDetail(postIndex);
         console.log(`Post card clicked for index: ${index}`); // 디버깅용 로그
     });
     console.log(`Post card created for index: ${index}`); // 디버깅용 로그
@@ -121,10 +119,22 @@ function createPostCard(post, index) { // index를 인자로 받음
 }
 
 // 상세 포스트 보여주기 (index를 인자로 받도록 변경)
-export function showPostDetail(post, index) {
+export function showPostDetail(index) {
     // `mainContentCache`는 `app.js`의 전역 변수이므로 `window.mainContentCache`로 접근
     if (!window.mainContentCache) {
         window.mainContentCache = document.querySelector('main').innerHTML;
+    }
+
+    const post = allPosts[index];
+
+    if (!post || typeof post !== 'object' || Object.keys(post).length === 0) {
+        console.error('dom.js: Invalid post object or post not found for index:', index, 'Post:', post);
+        alert('포스트 정보를 불러오는 데 문제가 발생했습니다.');
+        // window.restoreMainContent를 직접 호출합니다.
+        if (typeof window.restoreMainContent === 'function') {
+            window.restoreMainContent();
+        }
+        return;
     }
 
     const detailHTML = `
@@ -154,14 +164,11 @@ export function restoreMainContent() {
     if (window.mainContentCache) { // `window.mainContentCache`로 접근
         document.querySelector('main').innerHTML = window.mainContentCache;
         window.history.replaceState(null, '', window.location.pathname);
-
         document.querySelectorAll('.post-card').forEach(card => {
             card.addEventListener('click', () => {
                 const postIndex = parseInt(card.getAttribute('data-post-index'));
                 // `allPosts`는 `app.js`의 전역 변수이므로 `window.allPosts`로 접근
-                if (!isNaN(postIndex) && window.allPosts && window.allPosts[postIndex]) {
-                    showPostDetail(window.allPosts[postIndex], postIndex);
-                }
+                showPostDetail(postIndex);
             });
         });
 
