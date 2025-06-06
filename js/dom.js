@@ -111,7 +111,9 @@ function createPostCard(post, index) { // index를 인자로 받음
         const postIndex = parseInt(card.getAttribute('data-post-index'));
         if (window.allPosts && window.allPosts[postIndex]) {
             showPostDetail(window.allPosts[postIndex], postIndex);
+            console.log(`Post clicked: ${post.title} (index: ${postIndex})`); // 디버깅용 로그
         }
+        console.log(`Post card clicked for index: ${index}`); // 디버깅용 로그
     });
     console.log(`Post card created for index: ${index}`); // 디버깅용 로그
 
